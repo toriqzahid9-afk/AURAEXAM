@@ -86,6 +86,7 @@ export default function StudentDashboard({
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [saveMessage, setSaveMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [selectedSemester, setSelectedSemester] = useState<'Ganjil' | 'Genap'>('Genap');
 
   const [exams, setExams] = useState<any[]>([]);
   const [examHistory, setExamHistory] = useState<any[]>([]);
@@ -464,56 +465,54 @@ export default function StudentDashboard({
               <div className="absolute -right-16 -top-16 w-64 h-64 bg-red-500 rounded-full blur-3xl opacity-25 pointer-events-none"></div>
 
               {/* Dynamic Content responsive header */}
-              <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between md:items-center gap-6 relative z-10">
+              <div className="max-w-7xl mx-auto relative z-10">
                 
                 {/* Mobile top pills & actions row */}
-                <div className="md:hidden flex justify-between items-center w-full -mt-6 mb-4">
+                <div className="md:hidden flex justify-between items-center w-full -mt-6 mb-6">
                   <button 
                     onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-                    className="h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+                    className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all active:scale-95"
                   >
-                    <Menu className="h-5 w-5" />
+                    <Menu className="h-5.5 w-5.5" />
                   </button>
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-1 rounded-md bg-orange-500/30 backdrop-blur-sm text-orange-100 text-[9px] font-black tracking-wider uppercase">
-                      Selamat Pagi
-                    </span>
-                    <span className="px-2.5 py-1 rounded-md bg-amber-500 text-slate-900 text-[9px] font-black tracking-wider uppercase">
-                      Siswa
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button className="h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white relative">
-                      <Bell className="h-4 w-4" />
-                      <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-orange-600"></span>
+                    <button className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white relative transition-all active:scale-95">
+                      <Bell className="h-5 w-5" />
+                      <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-orange-600"></span>
                     </button>
-                    <button onClick={onLogout} className="h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white">
-                      <LogOut className="h-4 w-4" />
+                    <button onClick={onLogout} className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all active:scale-95">
+                      <LogOut className="h-5 w-5" />
                     </button>
                   </div>
                 </div>
 
-                {/* Left greeting panel */}
-                <div className="min-w-0 flex-1">
-                  <h1 className="text-2xl sm:text-3xl md:text-4.5xl font-black font-display tracking-tight leading-none flex flex-wrap items-center gap-2 break-words">
-                    Halo, {user.name}! <span className="wave-emoji inline-block animate-bounce">👋</span>
-                  </h1>
-                  {/* Subtitle based on viewport */}
-                  <p className="text-orange-100 text-xs sm:text-sm mt-3 font-semibold max-w-xl leading-relaxed hidden md:block">
-                    Selamat datang! Silahkan lakukan absensi menggunakan Scan QR Code.
-                  </p>
-                  <p className="text-orange-100 text-xs mt-2 font-bold flex items-center gap-1.5 md:hidden">
-                    <Calendar className="h-3.5 w-3.5" />
-                    Jumat, 2 Juli
-                  </p>
-                </div>
+                {/* Main Row: Greeting and Avatar side-by-side */}
+                <div className="flex flex-row justify-between items-center w-full gap-4">
+                  {/* Left greeting panel */}
+                  <div className="min-w-0 flex-1">
+                    {/* Badges row */}
+                    <div className="flex items-center gap-2 mb-3.5">
+                      <span className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/20 backdrop-blur-sm text-white text-[11px] font-bold tracking-wider uppercase">
+                        Selamat Pagi
+                      </span>
+                      <span className="px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 text-[11px] font-black tracking-wider uppercase shadow-sm">
+                        Siswa
+                      </span>
+                    </div>
 
-                {/* Right profile badge */}
-                <div className="hidden md:flex h-20 w-20 rounded-full bg-[#5C4033] text-white items-center justify-center text-2xl font-black shadow-lg ring-4 ring-white/10 select-none overflow-hidden shrink-0">
-                  <span>{user.name.substring(0, 2).toUpperCase()}</span>
-                </div>
-                <div className="md:hidden self-end mr-2 -mt-12">
-                  <div className="h-16 w-16 rounded-full bg-[#5C4033] text-white flex items-center justify-center text-xl font-black ring-4 ring-white/10 select-none shadow-md">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-display tracking-tight leading-none flex flex-wrap items-center gap-2.5 break-words">
+                      Halo, {user.name}! <span className="wave-emoji inline-block animate-bounce text-3xl sm:text-4xl md:text-5xl">👋</span>
+                    </h1>
+                    
+                    {/* Subtitle based on viewport */}
+                    <p className="text-orange-100 text-xs sm:text-sm mt-4 font-semibold max-w-xl leading-relaxed hidden md:block">
+                      Selamat datang! Silahkan lakukan absensi menggunakan Scan QR Code.
+                    </p>
+
+                  </div>
+
+                  {/* Right profile badge */}
+                  <div className="h-18 w-18 sm:h-20 sm:w-20 rounded-full bg-[#4A3525] text-white flex items-center justify-center text-xl sm:text-2xl font-black shadow-lg ring-8 ring-white/15 select-none overflow-hidden shrink-0 transition-all duration-300">
                     <span>{user.name.substring(0, 2).toUpperCase()}</span>
                   </div>
                 </div>
@@ -641,10 +640,10 @@ export default function StudentDashboard({
                       onClick={() => setActiveTab('jadwal')}
                       className="flex flex-col items-center gap-2.5 group"
                     >
-                      <div className="h-14 w-14 rounded-full bg-[#FF9F00]/10 text-[#FF9F00] flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Clock className="h-6 w-6" />
+                      <div className="h-16 w-16 rounded-2xl bg-[#FF9F00]/10 text-[#FF9F00] flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Clock className="h-8 w-8" />
                       </div>
-                      <span className="text-[11px] font-bold text-slate-500 group-hover:text-slate-800">Jadwal</span>
+                      <span className="text-xs font-bold text-slate-800">Jadwal</span>
                     </button>
 
                     {/* Mapel Icon button */}
@@ -652,10 +651,10 @@ export default function StudentDashboard({
                       onClick={() => setActiveTab('mapel')}
                       className="flex flex-col items-center gap-2.5 group"
                     >
-                      <div className="h-14 w-14 rounded-full bg-[#EC4899]/10 text-[#EC4899] flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <BookOpen className="h-6 w-6" />
+                      <div className="h-16 w-16 rounded-2xl bg-[#EC4899]/10 text-[#EC4899] flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <BookOpen className="h-8 w-8" />
                       </div>
-                      <span className="text-[11px] font-bold text-slate-500 group-hover:text-slate-800">Mapel</span>
+                      <span className="text-xs font-bold text-slate-800">Mapel</span>
                     </button>
 
                     {/* Ujian Icon button */}
@@ -663,10 +662,10 @@ export default function StudentDashboard({
                       onClick={() => setActiveTab('tugas')}
                       className="flex flex-col items-center gap-2.5 group"
                     >
-                      <div className="h-14 w-14 rounded-full bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Laptop className="h-6 w-6" />
+                      <div className="h-16 w-16 rounded-2xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <Laptop className="h-8 w-8" />
                       </div>
-                      <span className="text-[11px] font-bold text-slate-500 group-hover:text-slate-800">Ujian</span>
+                      <span className="text-xs font-bold text-slate-800">Ujian</span>
                     </button>
 
                     {/* Riwayat Absen Icon button */}
@@ -674,10 +673,10 @@ export default function StudentDashboard({
                       onClick={() => setActiveTab('absen')}
                       className="flex flex-col items-center gap-2.5 group"
                     >
-                      <div className="h-14 w-14 rounded-full bg-[#14B8A6]/10 text-[#14B8A6] flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <History className="h-6 w-6" />
+                      <div className="h-16 w-16 rounded-2xl bg-[#14B8A6]/10 text-[#14B8A6] flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <History className="h-8 w-8" />
                       </div>
-                      <span className="text-[11px] font-bold text-slate-500 group-hover:text-slate-800 text-center leading-none">Riwayat Absen</span>
+                      <span className="text-xs font-bold text-slate-800 text-center leading-none">Riwayat</span>
                     </button>
                   </div>
                 </div>
@@ -750,9 +749,9 @@ export default function StudentDashboard({
                   { label: 'Selesai', value: 0 },
                   { label: 'Total', value: 24 },
                 ].map((stat, idx) => (
-                  <div key={idx} className="bg-white/10 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 w-16 sm:w-20 text-center backdrop-blur-sm flex-1 sm:flex-initial">
-                    <div className="text-xl sm:text-2xl font-black">{stat.value}</div>
-                    <div className="text-[9px] sm:text-[10px] font-bold text-orange-100 uppercase tracking-wider">{stat.label}</div>
+                  <div key={idx} className="bg-white/10 rounded-xl sm:rounded-2xl p-2 sm:p-3 w-14 sm:w-16 text-center backdrop-blur-sm flex-1 sm:flex-initial">
+                    <div className="text-lg sm:text-xl font-black">{stat.value}</div>
+                    <div className="text-[8px] sm:text-[9px] font-bold text-orange-100 uppercase tracking-wider">{stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -826,20 +825,20 @@ export default function StudentDashboard({
                     <div className="hidden md:block overflow-x-auto">
                       <table className="w-full lg:min-w-full text-left border-collapse text-xs md:text-sm whitespace-nowrap">
                         <thead>
-                          <tr className="bg-orange-500 text-white font-black uppercase text-[10px] tracking-wider">
-                            <th className="py-3 px-4 rounded-tl-xl">Jam Belajar</th>
-                            <th className="py-3 px-4">Mata Pelajaran</th>
-                            <th className="py-3 px-4">Guru Pengampu</th>
-                            <th className="py-3 px-4 text-center rounded-tr-xl">Ruangan / Kelas</th>
+                          <tr className="bg-orange-500 text-white font-black uppercase text-[9px] tracking-wider">
+                            <th className="py-2 px-3 rounded-tl-xl">Jam</th>
+                            <th className="py-2 px-3">Mapel</th>
+                            <th className="py-2 px-3">Guru</th>
+                            <th className="py-2 px-3 text-center rounded-tr-xl">Ruang</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50 font-semibold text-slate-700">
                           {daySchedules.map((s, idx) => (
                             <tr key={s.id || idx} className="hover:bg-slate-50/50">
-                              <td className="py-4 px-4 font-extrabold text-orange-600">{s.time_start.substring(0, 5)} - {s.time_end.substring(0, 5)}</td>
-                              <td className="py-4 px-4 font-black text-slate-800">{s.subject_name}</td>
-                              <td className="py-4 px-4 text-slate-500">{s.teacher_name || 'TBA'}</td>
-                              <td className="py-4 px-4 text-center text-slate-600 font-bold">{s.room || 'Kelas ' + (user.class_level || 'XII.2')}</td>
+                              <td className="py-3 px-3 font-extrabold text-orange-600 text-[11px]">{s.time_start.substring(0, 5)} - {s.time_end.substring(0, 5)}</td>
+                              <td className="py-3 px-3 font-black text-slate-800 text-[11px]">{s.subject_name}</td>
+                              <td className="py-3 px-3 text-slate-500 text-[11px]">{s.teacher_name || 'TBA'}</td>
+                              <td className="py-3 px-3 text-center text-slate-600 font-bold text-[11px]">{s.room || 'Kelas ' + (user.class_level || 'XII.2')}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -1026,19 +1025,37 @@ export default function StudentDashboard({
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
+            <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl shrink-0">
                   <Calendar className="h-6 w-6" />
                 </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Tahun Ajaran Aktif</p>
-                  <h3 className="font-black text-slate-800">Pilih Semester Penilaian</h3>
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5 leading-none">Tahun Ajaran Aktif</p>
+                  <h3 className="font-black text-slate-800 text-sm sm:text-base leading-tight">Pilih Semester Penilaian</h3>
                 </div>
               </div>
-              <div className="flex bg-slate-100 p-1 rounded-2xl">
-                <button className="px-6 py-3 text-slate-500 font-bold rounded-xl transition-colors">Semester Ganjil</button>
-                <button className="px-6 py-3 bg-white text-indigo-600 font-black rounded-xl shadow-sm transition-colors">Semester Genap</button>
+              <div className="flex bg-slate-100 p-1 rounded-2xl w-full md:w-auto">
+                <button 
+                  onClick={() => setSelectedSemester('Ganjil')}
+                  className={`flex-1 md:flex-initial px-4 md:px-6 py-2.5 md:py-3 text-xs md:text-sm font-bold rounded-xl transition-all ${
+                    selectedSemester === 'Ganjil' 
+                      ? 'bg-white text-indigo-600 font-black shadow-sm' 
+                      : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  Semester Ganjil
+                </button>
+                <button 
+                  onClick={() => setSelectedSemester('Genap')}
+                  className={`flex-1 md:flex-initial px-4 md:px-6 py-2.5 md:py-3 text-xs md:text-sm font-bold rounded-xl transition-all ${
+                    selectedSemester === 'Genap' 
+                      ? 'bg-white text-indigo-600 font-black shadow-sm' 
+                      : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  Semester Genap
+                </button>
               </div>
             </div>
 
@@ -1153,20 +1170,13 @@ export default function StudentDashboard({
         {/* ================= RIWAYAT UJIAN TAB ================= */}
         {activeTab === 'riwayat-ujian' && (
           <div className="max-w-7xl w-full mx-auto p-4 md:p-8 space-y-6">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <History className="h-6 w-6 text-orange-600" />
-                <h2 className="text-xl font-extrabold text-slate-800 font-display">Riwayat Hasil Ujian CBT</h2>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-orange-50 rounded-2xl">
+                  <History className="h-5 w-5 text-orange-600" />
+                </div>
+                <h2 className="text-lg font-black text-slate-800 font-display tracking-tight">Riwayat Hasil Ujian CBT</h2>
               </div>
-              {examHistory.length > 0 && onClearAllExamHistory && (
-                <button 
-                  onClick={() => setShowClearAllConfirm(true)}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-2xl font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer active:scale-95"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span>Hapus Semua</span>
-                </button>
-              )}
             </div>
 
             <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 md:p-8 space-y-6">

@@ -1136,57 +1136,59 @@ export default function TeacherDashboard({
               {/* Background pattern */}
               <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px)] [background-size:40px] pointer-events-none"></div>
               <div className="absolute -right-16 -top-16 w-64 h-64 bg-red-500 rounded-full blur-3xl opacity-25 pointer-events-none"></div>
+              
               {/* Dynamic Content responsive header */}
-              <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between md:items-center gap-6 relative z-10">
+              <div className="max-w-7xl mx-auto relative z-10">
                 
                 {/* Mobile top pills & actions row */}
-                <div className="md:hidden flex justify-between items-center w-full -mt-6 mb-4">
+                <div className="md:hidden flex justify-between items-center w-full -mt-6 mb-6">
                   <button 
                     onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-                    className="h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+                    className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all active:scale-95"
                   >
-                    <Menu className="h-5 w-5" />
+                    <Menu className="h-5.5 w-5.5" />
                   </button>
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-1 rounded-md bg-orange-500/30 backdrop-blur-sm text-orange-100 text-[9px] font-black tracking-wider uppercase">
-                      Online
-                    </span>
-                    <span className="px-2.5 py-1 rounded-md bg-amber-500 text-slate-900 text-[9px] font-black tracking-wider uppercase">
-                      Pengajar
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button className="h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white relative">
-                      <Bell className="h-4 w-4" />
-                      <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-orange-600"></span>
+                    <button className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white relative transition-all active:scale-95">
+                      <Bell className="h-5 w-5" />
+                      <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-orange-600"></span>
                     </button>
-                    <button onClick={onLogout} className="h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white">
-                      <LogOut className="h-4 w-4" />
+                    <button onClick={onLogout} className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all active:scale-95">
+                      <LogOut className="h-5 w-5" />
                     </button>
                   </div>
                 </div>
 
-                {/* Left greeting panel */}
-                <div className="min-w-0 flex-1">
-                  <h1 className="text-2xl sm:text-3xl md:text-4.5xl font-black font-display tracking-tight leading-none flex flex-wrap items-center gap-2 break-words">
-                    Halo, {teacherName}! <span className="wave-emoji inline-block animate-bounce">👋</span>
-                  </h1>
-                  {/* Subtitle based on viewport */}
-                  <p className="text-orange-100 text-xs sm:text-sm mt-3 font-semibold max-w-xl leading-relaxed hidden md:block">
-                    Selamat datang di portal akademik pengajar AuraExam! Monitor ujian CBT, input nilai harian, dan pantau jurnal mengajar Anda secara digital.
-                  </p>
-                  <p className="text-orange-100 text-xs mt-2 font-bold flex items-center gap-1.5 md:hidden">
-                    <Calendar className="h-3.5 w-3.5" />
-                    Jumat, 2 Juli
-                  </p>
-                </div>
+                {/* Main Row: Greeting and Avatar side-by-side */}
+                <div className="flex flex-row justify-between items-center w-full gap-4">
+                  {/* Left greeting panel */}
+                  <div className="min-w-0 flex-1">
+                    {/* Badges row */}
+                    <div className="flex items-center gap-2 mb-3.5">
+                      <span className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/20 backdrop-blur-sm text-white text-[11px] font-bold tracking-wider uppercase">
+                        Online
+                      </span>
+                      <span className="px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 text-[11px] font-black tracking-wider uppercase shadow-sm">
+                        Pengajar
+                      </span>
+                    </div>
 
-                {/* Right profile badge */}
-                <div className="hidden md:flex h-20 w-20 rounded-full bg-orange-400 text-white items-center justify-center text-2xl font-black shadow-lg ring-4 ring-white/10 select-none overflow-hidden shrink-0">
-                  <span>{teacherName.substring(0, 2).toUpperCase()}</span>
-                </div>
-                <div className="md:hidden self-end mr-2 -mt-12">
-                  <div className="h-16 w-16 rounded-full bg-orange-400 text-white flex items-center justify-center text-xl font-black ring-4 ring-white/10 select-none shadow-md">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-display tracking-tight leading-none flex flex-wrap items-center gap-2.5 break-words">
+                      Halo, {teacherName}! <span className="wave-emoji inline-block animate-bounce text-3xl sm:text-4xl md:text-5xl">👋</span>
+                    </h1>
+                    
+                    {/* Subtitle based on viewport */}
+                    <p className="text-orange-100 text-xs sm:text-sm mt-4 font-semibold max-w-xl leading-relaxed hidden md:block">
+                      Selamat datang di portal akademik pengajar AuraExam! Monitor ujian CBT, input nilai harian, dan pantau jurnal mengajar Anda secara digital.
+                    </p>
+                    <p className="text-orange-100 text-xs sm:text-sm mt-3.5 font-bold flex items-center gap-2 md:hidden">
+                      <Calendar className="h-4 w-4 shrink-0" />
+                      Jumat, 2 Juli
+                    </p>
+                  </div>
+
+                  {/* Right profile badge */}
+                  <div className="h-18 w-18 sm:h-20 sm:w-20 rounded-full bg-orange-400 text-white flex items-center justify-center text-xl sm:text-2xl font-black shadow-lg ring-8 ring-white/15 select-none overflow-hidden shrink-0 transition-all duration-300">
                     <span>{teacherName.substring(0, 2).toUpperCase()}</span>
                   </div>
                 </div>

@@ -3,7 +3,6 @@ import AppLogo from './AppLogo';
 import { 
   Lock, 
   Mail, 
-  ArrowLeft, 
   ArrowRight,
   ShieldAlert,
   Loader2
@@ -50,19 +49,10 @@ export default function LoginScreen({ onBackToLanding, onLoginSuccess }: LoginSc
         <div className="absolute bottom-[-10%] left-[20%] w-[35%] h-[35%] bg-blue-500/10 rounded-full blur-[110px]"></div>
       </div>
 
-      {/* Back Button */}
-      <button 
-        onClick={onBackToLanding}
-        className="absolute top-6 left-6 z-20 flex items-center gap-2 text-slate-400 hover:text-white group transition-colors text-sm font-bold"
-      >
-        <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-        <span>Kembali</span>
-      </button>
-
       <div className="w-full max-w-5xl flex flex-col md:flex-row glass-dark rounded-[2.5rem] overflow-hidden shadow-2xl relative z-10 border border-slate-800 bg-slate-950/80">
         
         {/* Left Panel: Branding & Value Proposition */}
-        <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-between bg-gradient-to-tr from-orange-950 to-indigo-950 border-r border-slate-800">
+        <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-start gap-8 md:gap-12 bg-gradient-to-tr from-orange-950 to-indigo-950 border-r border-slate-800">
           <div className="flex items-center gap-3">
             <AppLogo />
             <span className="text-2xl font-extrabold font-display tracking-tight">
@@ -70,7 +60,7 @@ export default function LoginScreen({ onBackToLanding, onLoginSuccess }: LoginSc
             </span>
           </div>
 
-          <div className="my-12 md:my-0">
+          <div className="flex-1 flex flex-col justify-center">
             <h1 className="text-3xl md:text-4xl font-black leading-tight font-display mb-4">
               Platform Kehadiran & Akademik Terintegrasi
             </h1>
