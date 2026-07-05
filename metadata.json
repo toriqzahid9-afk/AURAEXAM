@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Remix: Remix: AuraExam",
+  "description": "Platform LMS \u0026 CBT modern dengan presensi QR Code cerdas, jurnal mengajar digital, dan ujian anti-curang.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

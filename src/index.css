@@ -1,0 +1,407 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Plus Jakarta Sans", sans-serif;
+
+  --color-brand-50: #fff7ed;
+  --color-brand-100: #ffedd5;
+  --color-brand-200: #fed7aa;
+  --color-brand-300: #fdba74;
+  --color-brand-400: #fb923c;
+  --color-brand-500: #f97316;
+  --color-brand-600: #ea580c;
+  --color-brand-700: #c2410c;
+  --color-brand-800: #9a3412;
+  --color-brand-900: #7c2d12;
+
+  --color-blue-50: #fff7ed;
+  --color-blue-100: #ffedd5;
+  --color-blue-200: #fed7aa;
+  --color-blue-300: #fdba74;
+  --color-blue-400: #fb923c;
+  --color-blue-500: #f97316;
+  --color-blue-600: #ea580c;
+  --color-blue-700: #c2410c;
+  --color-blue-800: #9a3412;
+  --color-blue-900: #7c2d12;
+  --color-blue-950: #431407;
+
+  --color-indigo-50: #fef3c7;
+  --color-indigo-100: #fde68a;
+  --color-indigo-200: #fcd34d;
+  --color-indigo-300: #fbbf24;
+  --color-indigo-400: #fbbf24;
+  --color-indigo-500: #f59e0b;
+  --color-indigo-600: #d97706;
+  --color-indigo-700: #b45309;
+  --color-indigo-800: #92400e;
+  --color-indigo-900: #78350f;
+  --color-indigo-950: #451a03;
+
+  --color-navy-50: #f4f6fa;
+  --color-navy-100: #eaecf5;
+  --color-navy-200: #d4d8eb;
+  --color-navy-300: #b0b9db;
+  --color-navy-400: #8693c7;
+  --color-navy-500: #6371b3;
+  --color-navy-600: #4d599c;
+  --color-navy-700: #3e477f;
+  --color-navy-800: #353a66;
+  --color-navy-950: #0f172a;
+}
+
+/* Custom Glassmorphism & Animations */
+.glass-dark {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sidebar-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pulse-dot {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* ===== LANDING PAGE EXTRAS ===== */
+html, body {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
+/* Floating badge animations */
+@keyframes floatAnim {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes floatAnimSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float {
+  animation: floatAnim 3s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: floatAnimSlow 4s ease-in-out infinite;
+}
+
+/* Landing nav shadow on scroll */
+#landing-nav.scrolled {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Shadow pro utility */
+.shadow-pro {
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.07);
+}
+
+/* Wave emoji animation */
+.wave-emoji {
+  display: inline-block;
+  animation: wave 1.5s ease-in-out infinite;
+  transform-origin: 70% 70%;
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-10deg);
+  }
+  40% {
+    transform: rotate(15deg);
+  }
+  60% {
+    transform: rotate(-5deg);
+  }
+  80% {
+    transform: rotate(10deg);
+  }
+}
+
+/* ===== INDIVIDUAL FEATURE CARDS WITH SPECIFIC HOVER THEMES ===== */
+
+.card-item {
+  background: #ffffff;
+  border: 1.5px solid #f1f5f9;
+  border-radius: 24px;
+  padding: 28px;
+  transition:
+    background-color  0.35s ease,
+    border-color      0.35s ease,
+    box-shadow        0.35s ease,
+    transform         0.35s ease;
+}
+
+.card-item-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+.card-item-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 10px;
+  transition: color 0.35s ease;
+}
+
+.card-item-desc {
+  font-size: 13.5px;
+  color: #64748b;
+  line-height: 1.7;
+  margin-bottom: 18px;
+  transition: color 0.35s ease;
+}
+
+.card-item-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-item-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #475569;
+  transition: color 0.35s ease;
+}
+
+.card-item-list li .check-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  transition: color 0.35s ease;
+}
+
+/* ======================================
+   KARTU 1 — ORANGE
+   ====================================== */
+.card-item--orange .card-item-icon { background: #fff7ed; color: #ea580c; }
+.card-item--orange .check-icon { color: #f97316; }
+
+.card-item--orange:hover {
+  background-color: #ea580c;
+  border-color: #c2410c;
+  box-shadow: 0 20px 40px -8px rgba(234, 88, 12, 0.3);
+  transform: translateY(-6px);
+}
+.card-item--orange:hover .card-item-icon { background-color: rgba(255,255,255,0.2); color: #fff; }
+.card-item--orange:hover .card-item-title  { color: #fff; }
+.card-item--orange:hover .card-item-desc   { color: #fed7aa; }
+.card-item--orange:hover .card-item-list li { color: #fff7ed; }
+.card-item--orange:hover .check-icon   { color: #fff; }
+
+/* ======================================
+   KARTU 2 — BLUE
+   ====================================== */
+.card-item--blue .card-item-icon { background: #eff6ff; color: #2563eb; }
+.card-item--blue .check-icon { color: #3b82f6; }
+
+.card-item--blue:hover {
+  background-color: #2563eb;
+  border-color: #1d4ed8;
+  box-shadow: 0 20px 40px -8px rgba(37, 99, 235, 0.3);
+  transform: translateY(-6px);
+}
+.card-item--blue:hover .card-item-icon { background-color: rgba(255,255,255,0.2); color: #fff; }
+.card-item--blue:hover .card-item-title  { color: #fff; }
+.card-item--blue:hover .card-item-desc   { color: #bfdbfe; }
+.card-item--blue:hover .card-item-list li { color: #eff6ff; }
+.card-item--blue:hover .check-icon   { color: #fff; }
+
+/* ======================================
+   KARTU 3 — AMBER
+   ====================================== */
+.card-item--amber .card-item-icon { background: #fffbeb; color: #d97706; }
+.card-item--amber .check-icon { color: #f59e0b; }
+
+.card-item--amber:hover {
+  background-color: #d97706;
+  border-color: #b45309;
+  box-shadow: 0 20px 40px -8px rgba(217, 119, 6, 0.3);
+  transform: translateY(-6px);
+}
+.card-item--amber:hover .card-item-icon { background-color: rgba(255,255,255,0.2); color: #fff; }
+.card-item--amber:hover .card-item-title  { color: #fff; }
+.card-item--amber:hover .card-item-desc   { color: #fde68a; }
+.card-item--amber:hover .card-item-list li { color: #fefce8; }
+.card-item--amber:hover .check-icon   { color: #fff; }
+
+/* ======================================
+   KARTU 4 — PURPLE
+   ====================================== */
+.card-item--purple .card-item-icon { background: #f5f3ff; color: #7c3aed; }
+.card-item--purple .check-icon { color: #8b5cf6; }
+
+.card-item--purple:hover {
+  background-color: #7c3aed;
+  border-color: #6d28d9;
+  box-shadow: 0 20px 40px -8px rgba(124, 58, 237, 0.3);
+  transform: translateY(-6px);
+}
+.card-item--purple:hover .card-item-icon { background-color: rgba(255,255,255,0.2); color: #fff; }
+.card-item--purple:hover .card-item-title  { color: #fff; }
+.card-item--purple:hover .card-item-desc   { color: #ddd6fe; }
+.card-item--purple:hover .card-item-list li { color: #f5f3ff; }
+.card-item--purple:hover .check-icon   { color: #fff; }
+
+/* ======================================
+   KARTU 5 — ROSE
+   ====================================== */
+.card-item--rose .card-item-icon { background: #fff1f2; color: #e11d48; }
+.card-item--rose .check-icon { color: #f43f5e; }
+
+.card-item--rose:hover {
+  background-color: #e11d48;
+  border-color: #be123c;
+  box-shadow: 0 20px 40px -8px rgba(225, 29, 72, 0.3);
+  transform: translateY(-6px);
+}
+.card-item--rose:hover .card-item-icon { background-color: rgba(255,255,255,0.2); color: #fff; }
+.card-item--rose:hover .card-item-title  { color: #fff; }
+.card-item--rose:hover .card-item-desc   { color: #fecdd3; }
+.card-item--rose:hover .card-item-list li { color: #fff1f2; }
+.card-item--rose:hover .check-icon   { color: #fff; }
+
+/* ======================================
+   KARTU 6 — TEAL
+   ====================================== */
+.card-item--teal .card-item-icon { background: #f0fdfa; color: #0d9488; }
+.card-item--teal .check-icon { color: #14b8a6; }
+
+.card-item--teal:hover {
+  background-color: #0d9488;
+  border-color: #0f766e;
+  box-shadow: 0 20px 40px -8px rgba(13, 148, 136, 0.3);
+  transform: translateY(-6px);
+}
+.card-item--teal:hover .card-item-icon { background-color: rgba(255,255,255,0.2); color: #fff; }
+.card-item--teal:hover .card-item-title  { color: #fff; }
+.card-item--teal:hover .card-item-desc   { color: #99f6e4; }
+.card-item--teal:hover .card-item-list li { color: #f0fdfa; }
+.card-item--teal:hover .check-icon   { color: #fff; }
+
+/* =============================================
+   PRICING SECTION (ORANGE THEME)
+   ============================================= */
+.pricing-orange-section {
+  background-color: #e65c00;
+}
+
+.pricing-card-orange {
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pricing-card-orange:hover {
+  background: rgba(0, 0, 0, 0.22);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.pricing-card-orange.featured {
+  background: linear-gradient(135deg, #ff943d, #dd4b00);
+  border: 2px solid #ffffff;
+  transform: scale(1.03);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  z-index: 10;
+}
+
+.pricing-card-orange.featured:hover {
+  background: linear-gradient(135deg, #ffa254, #e65205);
+  transform: scale(1.05) translateY(-6px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.featured-badge {
+  transform: translate(-50%, -3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.laser-line {
+  animation: laserMove 2.5s infinite ease-in-out;
+}
+
+@keyframes laserMove {
+  0% { top: 15%; }
+  50% { top: 85%; }
+  100% { top: 15%; }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
