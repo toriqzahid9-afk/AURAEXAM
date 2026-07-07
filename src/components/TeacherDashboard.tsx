@@ -43,7 +43,7 @@ import {
   Bell,
   X
 } from 'lucide-react';
-import { User as UserType, TeacherGrade, Schedule } from '../types';
+import { User as UserType, TeacherGrade, Schedule, Assignment } from '../types';
 import { mockDb } from '../mockDb';
 
 interface TeacherDashboardProps {
@@ -56,6 +56,8 @@ interface TeacherDashboardProps {
   onNavigateTo: (menuKey: string, menuName: string) => void;
   teacherGrades: TeacherGrade[];
   schedules: Schedule[];
+  assignments: Assignment[];
+  setAssignments: React.Dispatch<React.SetStateAction<Assignment[]>>;
   onLogout: () => void;
 }
 
@@ -69,10 +71,12 @@ export default function TeacherDashboard({
   onNavigateTo,
   teacherGrades,
   schedules,
+  assignments,
+  setAssignments,
   onLogout
 }: TeacherDashboardProps) {
   // Navigation & UI state
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'jadwal' | 'kelas' | 'tugas' | 'eskul' | 'penilaian' | 'rapor' | 'mapel' | 'bank-soal' | 'jadwal-ujian' | 'monitor-ujian' | 'data-siswa' | 'hasil-nilai' | 'profile-settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'jadwal' | 'kelas' | 'tugas' | 'penilaian' | 'rapor' | 'mapel' | 'bank-soal' | 'jadwal-ujian' | 'monitor-ujian' | 'data-siswa' | 'hasil-nilai' | 'profile-settings'>('dashboard');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState('Senin');
@@ -80,20 +84,13 @@ export default function TeacherDashboard({
 
   // --- LOCAL MOCK DATABASE STATES ---
   // 1. Assignments State (Daftar Tugas)
-  const [localAssignments, setLocalAssignments] = useState([
-    { id: 1, title: 'Tugas Mandiri: Gerak Lurus Berubah Beraturan', subject: 'Fisika Terapan', class: '12 IPA 1', deadline: '2026-07-10', submitted: '28/32', status: 'Aktif' },
-    { id: 2, title: 'Latihan Soal: Turunan Fungsi Trigonometri', subject: 'Matematika Wajib', class: '12 IPA 1', deadline: '2026-07-08', submitted: '30/32', status: 'Aktif' },
-    { id: 3, title: 'Analisis Jurnal: Gelombang Elektromagnetik', subject: 'Fisika Terapan', class: '12 IPA 1', deadline: '2026-07-01', submitted: '32/32', status: 'Selesai' }
-  ]);
+  const localAssignments = assignments;
+  const setLocalAssignments = setAssignments;
   const [newAssignmentTitle, setNewAssignmentTitle] = useState('');
   const [newAssignmentSubject, setNewAssignmentSubject] = useState('Fisika Terapan');
   const [newAssignmentDeadline, setNewAssignmentDeadline] = useState('2026-07-15');
+  const [previewFile, setPreviewFile] = useState<string | null>(null);
 
-  // 2. Extracurriculars (Eskul Saya)
-  const [localEskuls, setLocalEskuls] = useState([
-    { id: 1, name: 'Klub Robotik AuraExam', day: 'Kamis', time: '15:30 - 17:00', location: 'Lab Komputer 1', members: 18 },
-    { id: 2, name: 'Aura Coding Academy', day: 'Sabtu', time: '09:00 - 11:30', location: 'Lab Bahasa', members: 24 }
-  ]);
 
   // 3. Subject Reports State (Laporan Mapel)
   const [kbmReports, setKbmReports] = useState([
@@ -293,6 +290,8 @@ export default function TeacherDashboard({
     setTimeout(() => setSaveMessage(null), 4000);
   };
 
+  const [selectedAssignment, setSelectedAssignment] = useState<any | null>(null);
+
   // Add new assignment handler
   const handleAddAssignment = (e: FormEvent) => {
     e.preventDefault();
@@ -306,7 +305,7 @@ export default function TeacherDashboard({
         subject: newAssignmentSubject,
         class: '12 IPA 1',
         deadline: newAssignmentDeadline,
-        submitted: '0/32',
+        submitted: '0/0',
         status: 'Aktif'
       }
     ]);
@@ -947,14 +946,7 @@ export default function TeacherDashboard({
                   <Clipboard className="h-4.5 w-4.5 shrink-0" />
                   {!isSidebarCollapsed && <span>Daftar Tugas</span>}
                 </button>
-                <button 
-                  onClick={() => { setActiveTab('eskul'); onNavigateTo('eskul', 'Eskul Saya'); }}
-                  className={`w-full flex items-center ${isSidebarCollapsed ? 'justify-center p-3 rounded-2xl' : 'gap-3 px-4 py-3 rounded-xl'} text-xs font-bold transition-all cursor-pointer ${activeTab === 'eskul' ? 'bg-orange-50 text-orange-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'}`}
-                  title={isSidebarCollapsed ? "Eskul Saya" : undefined}
-                >
-                  <Users className="h-4.5 w-4.5 shrink-0" />
-                  {!isSidebarCollapsed && <span>Eskul Saya</span>}
-                </button>
+
                 <button 
                   onClick={() => { setActiveTab('penilaian'); onNavigateTo('penilaian', 'Penilaian'); }}
                   className={`w-full flex items-center ${isSidebarCollapsed ? 'justify-center p-3 rounded-2xl' : 'gap-3 px-4 py-3 rounded-xl'} text-xs font-bold transition-all cursor-pointer ${activeTab === 'penilaian' ? 'bg-orange-50 text-orange-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'}`}
@@ -964,12 +956,12 @@ export default function TeacherDashboard({
                   {!isSidebarCollapsed && <span>Penilaian</span>}
                 </button>
                 <button 
-                  onClick={() => { setActiveTab('rapor'); onNavigateTo('rapor', 'Rapor Sibentik'); }}
+                  onClick={() => { setActiveTab('rapor'); onNavigateTo('rapor', 'Rapor'); }}
                   className={`w-full flex items-center ${isSidebarCollapsed ? 'justify-center p-3 rounded-2xl' : 'gap-3 px-4 py-3 rounded-xl'} text-xs font-bold transition-all cursor-pointer ${activeTab === 'rapor' ? 'bg-orange-50 text-orange-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'}`}
-                  title={isSidebarCollapsed ? "Rapor Sibentik" : undefined}
+                  title={isSidebarCollapsed ? "Rapor" : undefined}
                 >
                   <Award className="h-4.5 w-4.5 shrink-0" />
-                  {!isSidebarCollapsed && <span>Rapor Sibentik</span>}
+                  {!isSidebarCollapsed && <span>Rapor</span>}
                 </button>
                 <button 
                   onClick={() => { setActiveTab('mapel'); onNavigateTo('mapel', 'Laporan Mapel'); }}
@@ -1646,16 +1638,20 @@ export default function TeacherDashboard({
                 
                 <div className="space-y-3">
                   {localAssignments.map(a => (
-                    <div key={a.id} className="p-4 border border-slate-100 rounded-2xl flex justify-between items-center hover:bg-slate-50/50 transition-all">
+                    <div 
+                      key={a.id} 
+                      onClick={() => setSelectedAssignment(a)}
+                      className="p-4 border border-slate-100 rounded-2xl flex justify-between items-center hover:bg-slate-50 transition-all cursor-pointer"
+                    >
                       <div>
                         <h4 className="font-extrabold text-slate-800 text-xs sm:text-sm">{a.title}</h4>
                         <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-wider">
-                          {a.subject} • Kelas: {a.class} • Batas: {a.deadline}
+                          {a.subject} • Batas: {a.deadline}
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="px-2.5 py-1 bg-orange-50 text-orange-600 font-extrabold text-[10px] rounded-lg">
-                          {a.submitted} Siswa
+                          {(a.submissions?.length || 0)} Siswa Mengumpul
                         </span>
                         <span className={`px-2.5 py-1 font-extrabold text-[10px] rounded-lg ${a.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'}`}>
                           {a.status}
@@ -1666,48 +1662,77 @@ export default function TeacherDashboard({
                 </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* VIEW 5: ESKUL SAYA */}
-        {activeTab === 'eskul' && (
-          <div className="max-w-7xl w-full mx-auto p-4 md:p-8 space-y-6">
-            <div className="flex items-center gap-2 mb-2">
-              <Users className="h-6 w-6 text-orange-600" />
-              <h2 className="text-xl font-extrabold text-slate-800 font-display">Ekstrakurikuler Binaan</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {localEskuls.map(e => (
-                <div key={e.id} className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm space-y-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-extrabold text-orange-600">{e.name}</h3>
-                    <span className="px-2.5 py-1 bg-orange-50 text-orange-600 text-[10px] font-black rounded-lg">PEMBINA</span>
+            
+            {/* Submission Grading Modal */}
+            {selectedAssignment && (
+              <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-3xl p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-black text-slate-800">Penilaian: {selectedAssignment.title}</h3>
+                    <button onClick={() => setSelectedAssignment(null)} className="text-slate-400 hover:text-slate-600">
+                      <X className="h-6 w-6" />
+                    </button>
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 text-xs font-semibold text-slate-500 bg-slate-50 p-4 rounded-2xl">
-                    <div>
-                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Hari Latihan</span>
-                      <span className="font-extrabold text-slate-800 text-sm">{e.day}</span>
-                    </div>
-                    <div>
-                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Waktu</span>
-                      <span className="font-extrabold text-slate-800 text-sm">{e.time}</span>
-                    </div>
-                    <div>
-                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Lokasi</span>
-                      <span className="font-extrabold text-slate-800 text-sm">{e.location}</span>
-                    </div>
-                    <div>
-                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Anggota</span>
-                      <span className="font-extrabold text-slate-800 text-sm">{e.members} Siswa</span>
-                    </div>
-                  </div>
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-slate-400 text-xs uppercase tracking-wider border-b border-slate-100">
+                        <th className="pb-3 text-left">Nama Siswa</th>
+                        <th className="pb-3 text-left">File/Link</th>
+                        <th className="pb-3 text-left">Waktu</th>
+                        <th className="pb-3 text-center">Nilai</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedAssignment.submissions?.map(s => (
+                        <tr key={s.id} className="border-b border-slate-50">
+                          <td className="py-4 font-bold">{s.studentName}</td>
+                          <td className="py-4">
+                          <button 
+                            onClick={() => setPreviewFile(s.fileOrLink)}
+                            className="text-orange-600 font-bold hover:underline"
+                          >
+                            Lihat
+                          </button>
+                          </td>
+                          <td className="py-4 text-slate-500">{new Date(s.submittedAt).toLocaleDateString()}</td>
+                          <td className="py-4">
+                            <input 
+                              type="number"
+                              placeholder="0"
+                              className="w-16 p-2 border border-slate-200 rounded-lg text-center"
+                              onChange={(e) => {
+                                const newGrade = Number(e.target.value);
+                                setAssignments(prev => prev.map(a => a.id === selectedAssignment.id ? {
+                                  ...a,
+                                  submissions: a.submissions.map(sub => sub.id === s.id ? { ...sub, grade: newGrade, status: 'Selesai' } : sub)
+                                } : a));
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
+            {/* File Preview Modal */}
+            {previewFile && (
+              <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] p-4">
+                <div className="bg-white rounded-3xl p-4 w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col relative">
+                  <button 
+                    onClick={() => setPreviewFile(null)} 
+                    className="absolute top-4 right-4 text-slate-500 hover:text-slate-800 bg-white/50 p-2 rounded-full z-10"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                  <img src={previewFile} alt="Submission Preview" className="w-full h-full object-contain" />
+                </div>
+              </div>
+            )}
           </div>
         )}
+
 
         {/* VIEW 6: PENILAIAN */}
         {activeTab === 'penilaian' && (

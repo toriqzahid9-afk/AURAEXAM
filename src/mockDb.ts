@@ -80,8 +80,33 @@ const INITIAL_SCHEDULES: Schedule[] = [
 ];
 
 const INITIAL_ASSIGNMENTS: Assignment[] = [
-  { id: 1, name: "Fisika: Makalah Kuantum", deadline: "Besok, 23:59 WIB", status: "Belum Dikumpul", type: "Tugas" },
-  { id: 2, name: "Matematika: Kalkulus Dasar", deadline: "3 Juni 2026", status: "Selesai", type: "Tugas" }
+  { 
+    id: 1, 
+    title: "Fisika: Makalah Kuantum", 
+    subject: "Fisika Terapan", 
+    deadline: "Besok, 23:59 WIB", 
+    status: "Aktif",
+    submissions: []
+  },
+  { 
+    id: 2, 
+    title: "Matematika: Kalkulus Dasar", 
+    subject: "Matematika Wajib", 
+    deadline: "3 Juni 2026", 
+    status: "Selesai",
+    submissions: [
+      {
+        id: 1,
+        studentId: 1,
+        studentName: "DZAKWAN",
+        fileOrLink: "https://link-tugas-dzakwan.com",
+        submittedAt: "2026-06-01 10:00",
+        status: "Selesai",
+        grade: 95,
+        notes: "Sangat baik"
+      }
+    ]
+  }
 ];
 
 const INITIAL_STUDENT_GRADES: Grade[] = [

@@ -33,12 +33,24 @@ export interface Question {
   options: string[];
 }
 
+export interface Submission {
+  id: number;
+  studentId: number;
+  studentName: string;
+  fileOrLink: string;
+  submittedAt: string;
+  status: 'Pending' | 'Selesai';
+  grade?: number;
+  notes?: string;
+}
+
 export interface Assignment {
   id: number;
-  name: string;
+  title: string;
+  subject: string;
   deadline: string;
-  status: 'Belum Dikumpul' | 'Selesai';
-  type: string;
+  status: 'Aktif' | 'Selesai';
+  submissions: Submission[];
 }
 
 export interface Grade {

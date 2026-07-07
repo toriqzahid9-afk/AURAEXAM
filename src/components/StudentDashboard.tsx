@@ -23,6 +23,7 @@ import {
   ChevronRight,
   ChevronLeft,
   FileText,
+  X,
   Volume2,
   UserCheck,
   HelpCircle,
@@ -35,7 +36,8 @@ import {
   Book,
   Globe,
   Leaf,
-  DollarSign
+  DollarSign,
+  CloudDownload
 } from 'lucide-react';
 import { User as UserType, Assignment, Grade, Schedule } from '../types';
 import { mockDb } from '../mockDb';
@@ -49,6 +51,7 @@ interface StudentDashboardProps {
   onNavigateTo: (menuKey: string, menuName: string) => void;
   onStartExam: (exam: any) => void;
   assignments: Assignment[];
+  setAssignments: React.Dispatch<React.SetStateAction<Assignment[]>>;
   grades: Grade[];
   schedules: Schedule[];
   onLogout: () => void;
@@ -66,6 +69,7 @@ export default function StudentDashboard({
   onNavigateTo,
   onStartExam,
   assignments,
+  setAssignments,
   grades,
   schedules,
   onLogout,
@@ -73,7 +77,7 @@ export default function StudentDashboard({
   onDeleteExamHistory,
   onClearAllExamHistory
 }: StudentDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'jadwal' | 'mapel' | 'tugas' | 'rapor' | 'absen' | 'profile' | 'daftar-ujian' | 'riwayat-ujian' | 'profile-settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'jadwal' | 'mapel' | 'tugas' | 'rapor' | 'penilaian' | 'absen' | 'profile' | 'daftar-ujian' | 'riwayat-ujian' | 'profile-settings'>('dashboard');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState('Senin');
@@ -87,7 +91,9 @@ export default function StudentDashboard({
   const [confirmPassword, setConfirmPassword] = useState('');
   const [saveMessage, setSaveMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
   const [selectedSemester, setSelectedSemester] = useState<'Ganjil' | 'Genap'>('Genap');
-
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
+  const [submissionFile, setSubmissionFile] = useState('');
   const [exams, setExams] = useState<any[]>([]);
   const [examHistory, setExamHistory] = useState<any[]>([]);
   const [selectedExamForToken, setSelectedExamForToken] = useState<any | null>(null);
@@ -336,6 +342,16 @@ export default function StudentDashboard({
                   <Award className="h-4.5 w-4.5 shrink-0" />
                   {!isSidebarCollapsed && <span>Rapor</span>}
                 </button>
+                {user.role === 'teacher' && (
+                  <button 
+                    onClick={() => { setActiveTab('penilaian'); onNavigateTo('penilaian', 'Penilaian'); }}
+                    className={`w-full flex items-center ${isSidebarCollapsed ? 'justify-center p-3 rounded-2xl' : 'gap-3 px-4 py-3 rounded-xl'} text-xs font-bold transition-all cursor-pointer ${activeTab === 'penilaian' ? 'bg-orange-50 text-orange-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'}`}
+                    title={isSidebarCollapsed ? "Penilaian" : undefined}
+                  >
+                    <FileText className="h-4.5 w-4.5 shrink-0" />
+                    {!isSidebarCollapsed && <span>Penilaian</span>}
+                  </button>
+                )}
               </nav>
             </div>
 
@@ -471,17 +487,17 @@ export default function StudentDashboard({
                 <div className="md:hidden flex justify-between items-center w-full -mt-6 mb-6">
                   <button 
                     onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-                    className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all active:scale-95"
+                    className="h-12 w-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all active:scale-95"
                   >
-                    <Menu className="h-5.5 w-5.5" />
+                    <Menu className="h-6 w-6" />
                   </button>
                   <div className="flex items-center gap-2">
-                    <button className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white relative transition-all active:scale-95">
-                      <Bell className="h-5 w-5" />
-                      <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-orange-600"></span>
+                    <button className="h-12 w-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white relative transition-all active:scale-95">
+                      <Bell className="h-6 w-6" />
+                      <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-orange-600"></span>
                     </button>
-                    <button onClick={onLogout} className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all active:scale-95">
-                      <LogOut className="h-5 w-5" />
+                    <button onClick={onLogout} className="h-12 w-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all active:scale-95">
+                      <LogOut className="h-6 w-6" />
                     </button>
                   </div>
                 </div>
@@ -591,7 +607,7 @@ export default function StudentDashboard({
                 <div className="w-full space-y-3">
                   <button 
                     onClick={onOpenScanner}
-                    className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-extrabold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md shadow-orange-500/25 transition-all text-xs uppercase tracking-wider cursor-pointer active:scale-95"
+                    className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-extrabold h-[30px] rounded-xl flex items-center justify-center gap-2 shadow-md shadow-orange-500/25 transition-all text-[10px] uppercase tracking-wider cursor-pointer active:scale-95"
                   >
                     <QrCode className="h-4.5 w-4.5" />
                     <span>Scan QR Sekarang</span>
@@ -600,14 +616,14 @@ export default function StudentDashboard({
                   <div className="grid grid-cols-2 gap-3">
                     <button 
                       onClick={() => onOpenPermit('Sakit')}
-                      className="border border-[#F59E0B] text-[#D97706] hover:bg-[#FFFBEB] font-extrabold py-3 rounded-xl transition-colors text-xs uppercase tracking-wider cursor-pointer"
+                      className="border border-[#F59E0B] text-[#D97706] hover:bg-[#FFFBEB] font-extrabold h-[30px] rounded-xl transition-colors text-[10px] uppercase tracking-wider cursor-pointer"
                     >
                       <span>Sakit</span>
                     </button>
 
                     <button 
                       onClick={() => onOpenPermit('Izin')}
-                      className="border border-[#A855F7] text-[#7C3AED] hover:bg-[#FDF4FF] font-extrabold py-3 rounded-xl transition-colors text-xs uppercase tracking-wider cursor-pointer"
+                      className="border border-[#A855F7] text-[#7C3AED] hover:bg-[#FDF4FF] font-extrabold h-[30px] rounded-xl transition-colors text-[10px] uppercase tracking-wider cursor-pointer"
                     >
                       <span>Izin</span>
                     </button>
@@ -823,7 +839,7 @@ export default function StudentDashboard({
 
                     {/* Desktop Table Layout */}
                     <div className="hidden md:block overflow-x-auto">
-                      <table className="w-full lg:min-w-full text-left border-collapse text-xs md:text-sm whitespace-nowrap">
+                      <table className="w-full lg:min-w-full text-left border-collapse text-[10px] md:text-sm whitespace-nowrap">
                         <thead>
                           <tr className="bg-orange-500 text-white font-black uppercase text-[9px] tracking-wider">
                             <th className="py-2 px-3 rounded-tl-xl">Jam</th>
@@ -960,25 +976,140 @@ export default function StudentDashboard({
               </div>
 
               <div className="space-y-3">
-                {assignments.map(a => (
+                {assignments && assignments.length > 0 ? assignments.map(a => (
                   <div key={a.id} className="p-4 border border-slate-100 rounded-2xl flex items-center justify-between hover:bg-slate-50 transition-colors">
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
                         <FileText className="h-6 w-6" />
                       </div>
                       <div>
-                        <h4 className="font-extrabold text-slate-800 text-sm leading-snug">{a.name}</h4>
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[9px] font-bold uppercase">{a.type}</span>
-                        <p className="text-slate-400 text-[10px] font-bold mt-1">📅 13 Jan, 16.45 • {a.id}</p>
+                        <h4 className="font-extrabold text-slate-800 text-sm leading-snug">{a.title}</h4>
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[9px] font-bold uppercase">{a.subject}</span>
+                        <p className="text-slate-400 text-[10px] font-bold mt-1">📅 Deadline: {a.deadline}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase">Nilai: 100.00</span>
+                    {a.submissions && a.submissions.find(s => s.studentId === user.id) ? (
+                        <button
+                          onClick={() => {
+                            setSelectedAssignment(a);
+                            setIsSubmitModalOpen(true);
+                          }}
+                          className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
+                            a.submissions.find(s => s.studentId === user.id)?.status === 'Selesai' 
+                              ? 'bg-emerald-50 text-emerald-600' 
+                              : 'bg-amber-50 text-amber-600'
+                          }`}
+                        >
+                          {a.submissions.find(s => s.studentId === user.id)?.status === 'Selesai' 
+                            ? `Nilai: ${a.submissions.find(s => s.studentId === user.id)?.grade || '-'}`
+                            : 'Sudah Dikumpulkan'}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setSelectedAssignment(a);
+                            setIsSubmitModalOpen(true);
+                          }}
+                          className="px-3 py-1 bg-orange-600 text-white rounded-full text-[10px] font-black uppercase"
+                        >
+                          Kumpulkan
+                        </button>
+                      )}
                       <ChevronRight className="h-5 w-5 text-slate-300" />
                     </div>
                   </div>
-                ))}
+                )) : <p className="text-center text-slate-400 font-bold p-8">Belum ada tugas.</p>}
               </div>
+            </div>
+          </div>
+        )}
+        
+        {isSubmitModalOpen && selectedAssignment && (
+          <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-3xl p-6 w-full max-w-lg">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-black text-slate-800">{selectedAssignment.title}</h3>
+                <button onClick={() => setIsSubmitModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              
+              <div className="flex gap-2 mb-6">
+                 {selectedAssignment.submissions?.find(s => s.studentId === user.id)?.status === 'Selesai' && (
+                    <div className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3" /> Dinilai — {selectedAssignment.submissions?.find(s => s.studentId === user.id)?.grade}
+                    </div>
+                 )}
+                <div className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold flex items-center gap-1">
+                   <Calendar className="h-3 w-3" /> {selectedAssignment.deadline}
+                </div>
+              </div>
+
+              <div className="bg-slate-50 p-4 rounded-xl mb-6">
+                <p className="text-sm text-slate-600">Instruksi: {selectedAssignment.title}</p>
+              </div>
+
+              {selectedAssignment.submissions?.find(s => s.studentId === user.id)?.status === 'Selesai' ? (
+                <div className="bg-emerald-50 p-4 rounded-xl mb-6">
+                  <p className="text-xs text-emerald-600 font-bold mb-1">NILAI AKHIR</p>
+                  <p className="text-3xl font-black text-emerald-700">{selectedAssignment.submissions?.find(s => s.studentId === user.id)?.grade?.toFixed(2)}</p>
+                </div>
+              ) : (
+                <div className="mb-6">
+                  <div className="flex flex-col gap-2">
+                    <input
+                      type="text"
+                      placeholder="Tempel link tugas"
+                      className="w-full p-3 bg-slate-100 rounded-xl"
+                      value={submissionFile}
+                      onChange={(e) => setSubmissionFile(e.target.value)}
+                    />
+                    <input
+                      type="file"
+                      accept="image/*,video/*"
+                      className="w-full p-3 bg-slate-100 rounded-xl"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setSubmissionFile(e.target.files[0].name);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {selectedAssignment.submissions?.find(s => s.studentId === user.id)?.status === 'Selesai' ? (
+                <div className="p-4 border border-slate-100 rounded-xl flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-6 w-6 text-slate-400" />
+                    <span className="text-sm font-bold">File / Link Jawaban</span>
+                  </div>
+                  <a href={selectedAssignment.submissions?.find(s => s.studentId === user.id)?.fileOrLink} target="_blank" className="text-orange-600 font-bold text-sm">Lihat</a>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setAssignments(prev => prev.map(a => a.id === selectedAssignment.id ? {
+                      ...a,
+                      submissions: [...(a.submissions || []), {
+                        id: Date.now(),
+                        studentId: user.id,
+                        studentName: user.name,
+                        fileOrLink: submissionFile,
+                        submittedAt: new Date().toISOString(),
+                        status: 'Pending'
+                      }]
+                    } : a));
+                    alert('Tugas berhasil dikumpulkan!');
+                    setIsSubmitModalOpen(false);
+                    setSubmissionFile('');
+                  }}
+                  className="w-full p-3 bg-orange-600 text-white rounded-xl font-bold"
+                >
+                  Kumpulkan
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -1131,7 +1262,7 @@ export default function StudentDashboard({
 
                   {/* Desktop Table Layout */}
                   <div className="hidden md:block overflow-x-auto">
-                    <table className="w-full lg:min-w-full text-left border-collapse text-xs md:text-sm whitespace-nowrap">
+                    <table className="w-full lg:min-w-full text-left border-collapse text-[10px] md:text-sm whitespace-nowrap">
                       <thead>
                         <tr className="bg-orange-500 text-white font-black uppercase text-[10px] tracking-wider">
                           <th className="py-3 px-4 rounded-tl-xl">Nama Ujian</th>
@@ -1224,7 +1355,7 @@ export default function StudentDashboard({
 
                   {/* Desktop Table Layout */}
                   <div className="hidden md:block overflow-x-auto">
-                    <table className="w-full lg:min-w-full text-left border-collapse text-xs md:text-sm whitespace-nowrap">
+                    <table className="w-full lg:min-w-full text-left border-collapse text-[10px] md:text-sm whitespace-nowrap">
                       <thead>
                         <tr className="bg-orange-500 text-white font-black uppercase text-[10px] tracking-wider">
                           <th className="py-3 px-4 rounded-tl-xl">Nama Ujian</th>
@@ -1357,6 +1488,98 @@ export default function StudentDashboard({
                     <span className="text-slate-500 text-xs block font-bold mt-1">Pukul 07.10 WIB</span>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= PORTAL PENILAIAN TAB ================= */}
+        {user.role === 'teacher' && activeTab === 'penilaian' && (
+          <div className="max-w-7xl w-full mx-auto p-4 md:p-8 space-y-6">
+            <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-3xl p-6 md:p-8 text-white flex flex-col md:flex-row justify-between items-center gap-6 shadow-xl">
+              <div>
+                <div className="p-3 bg-white/20 rounded-2xl w-fit mb-4">
+                  <FileText className="h-6 w-6" />
+                </div>
+                <h2 className="text-2xl md:text-3xl font-black font-display tracking-tight">Input Nilai Kelas</h2>
+                <p className="text-violet-100 font-medium">Kelola nilai ulangan dan ujian siswa per semester</p>
+              </div>
+              <div className="flex gap-4">
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 text-center min-w-[120px]">
+                  <div className="text-3xl font-black">3</div>
+                  <div className="text-xs font-bold uppercase tracking-wider opacity-80">Mata Pelajaran</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 text-center min-w-[120px]">
+                  <div className="text-3xl font-black">23</div>
+                  <div className="text-xs font-bold uppercase tracking-wider opacity-80">Siswa</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 md:p-8 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="md:col-span-1">
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Pilih Mata Pelajaran & Kelas</label>
+                  <select className="w-full p-3 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-orange-500 outline-none">
+                    <option>Geografi (XI.1)</option>
+                    <option>Geografi (XII.1)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Batas KKM</label>
+                  <input type="number" defaultValue={75} className="w-full p-3 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-orange-500 outline-none" />
+                </div>
+                <div className="flex items-end gap-2">
+                  <button className="flex-1 p-3 rounded-2xl bg-indigo-600 text-white font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all">
+                    <CloudDownload className="h-4 w-4" /> Tarik Nilai CBT
+                  </button>
+                  <div className="flex bg-slate-100 p-1 rounded-2xl">
+                    <button className="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-white hover:text-slate-800 transition-all">Ganjil</button>
+                    <button className="px-4 py-2 rounded-xl text-xs font-bold bg-white text-indigo-600 shadow-sm transition-all">Genap</button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-[10px] md:text-sm text-left">
+                  <thead className="text-xs text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                    <tr>
+                      <th className="py-4 px-2">Nama Siswa</th>
+                      <th className="py-4 px-2 text-center">Tugas</th>
+                      <th className="py-4 px-2 text-center">PH 1</th>
+                      <th className="py-4 px-2 text-center">PH 2</th>
+                      <th className="py-4 px-2 text-center">PH 3</th>
+                      <th className="py-4 px-2 text-center">PH 4</th>
+                      <th className="py-4 px-2 text-center">UTS</th>
+                      <th className="py-4 px-2 text-center">UAS</th>
+                      <th className="py-4 px-2 text-center text-indigo-600">Nilai Akhir</th>
+                      <th className="py-4 px-2 text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {[
+                      { name: "ADITIYA", nis: "0096397075" },
+                      { name: "AENI MAULIDA", nis: "0092287196" },
+                      { name: "ANDRA SAPUTRA", nis: "0098075826" },
+                      { name: "DANIA", nis: "3107473751" },
+                    ].map((student, idx) => (
+                      <tr key={idx}>
+                        <td className="py-4 px-2">
+                          <div className="font-bold text-slate-800">{student.name}</div>
+                          <div className="text-xs text-slate-400">{student.nis}</div>
+                        </td>
+                        <td className="py-4 px-2 text-center"><input type="number" defaultValue={0} className="w-16 p-2 rounded-lg border border-slate-200 text-center" /></td>
+                        {[...Array(6)].map((_, i) => <td key={i} className="py-4 px-2 text-center"><input type="number" placeholder="-" className="w-16 p-2 rounded-lg border border-slate-200 text-center" /></td>)}
+                        <td className="py-4 px-2 text-center text-red-500 font-bold">-</td>
+                        <td className="py-4 px-2 text-center">
+                          <button className="text-slate-400 hover:text-indigo-600">
+                            <Save className="h-5 w-5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

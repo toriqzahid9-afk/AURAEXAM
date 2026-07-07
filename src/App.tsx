@@ -381,6 +381,7 @@ export default function App() {
                   setIsExamActive(true);
                 }}
                 assignments={assignments}
+                setAssignments={setAssignments}
                 grades={studentGrades}
                 schedules={schedules}
                 examHistory={examHistory}
@@ -402,6 +403,8 @@ export default function App() {
                 onNavigateTo={(k, n) => console.log('navigating to', k, n)}
                 teacherGrades={teacherGrades}
                 schedules={schedules}
+                assignments={assignments}
+                setAssignments={setAssignments}
                 onLogout={handleLogout}
               />
             )}
